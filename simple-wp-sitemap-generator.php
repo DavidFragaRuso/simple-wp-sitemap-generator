@@ -2,10 +2,12 @@
 /*
 Plugin Name: Custom Sitemap Generator
 Plugin URI: https://dfraga.es/
-Description: Genera un sitemap XML automáticamente, incluyendo publicaciones, páginas, categorías y etiquetas.
+Description: __( 'Genera un sitemap XML automáticamente, incluyendo publicaciones, páginas, categorías y etiquetas.', 'dfr-custom-sitemap' )
 Version: 1.0
 Author: David Fraga
 Author URI: https://dfraga.es/
+Text Domain: dfr-custom-sitemap
+Domain Path: /languages
 License: GPLv3
 */
 
