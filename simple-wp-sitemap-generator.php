@@ -11,6 +11,12 @@ Domain Path: /languages
 License: GPLv3
 */
 
+add_action('plugins_loaded', 'custom_sitemap_load_textdomain');
+
+function custom_sitemap_load_textdomain() {
+    load_plugin_textdomain('dfr-custom-sitemap', false, dirname(plugin_basename(__FILE__)) . '/languages');
+}
+
 add_action('init', 'generate_dynamic_sitemap_plugin');
 function generate_dynamic_sitemap_plugin() {
     if (isset($_GET['sitemap'])) {
