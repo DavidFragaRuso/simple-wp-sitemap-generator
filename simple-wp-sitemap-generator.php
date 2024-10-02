@@ -1,0 +1,71 @@
+<?php
+/*
+Plugin Name: Custom Sitemap Generator
+Plugin URI: https://dfraga.es/
+Description: Genera un sitemap XML automáticamente, incluyendo publicaciones, páginas, categorías y etiquetas.
+Version: 1.0
+Author: David Fraga
+Author URI: https://dfraga.es/
+License: GPLv3
+*/
+
+add_action('init', 'generate_dynamic_sitemap_plugin');
+function generate_dynamic_sitemap_plugin() {
+    if (isset($_GET['sitemap'])) {
+        header('Content-Type: application/xml; charset=utf-8');
+        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';   
+
+        // Include posts and publications
+        $posts = get_posts(array('numberposts' => -1, 'post_type' => 'post', 'post_status' => 'publish'));
+        foreach ($posts as $post) {
+            setup_postdata($post);
+            echo '<url>';
+            echo '<loc>' . get_permalink($post) . '</loc>';
+            echo '<lastmod>' . get_the_modified_time('c', $post) . '</lastmod>';
+            echo '<changefreq>weekly</changefreq>';
+            echo '<priority>0.5</priority>';
+            echo '</url>';
+        }
+        wp_reset_postdata();
+
+        // Include pages
+        $pages = get_posts(array('numberposts' => -1, 'post_type' => 'page', 'post_status' => 'publish'));
+        foreach ($pages as $page) {
+            setup_postdata($page);
+            echo '<url>';
+            echo '<loc>' . get_permalink($page) . '</loc>';
+            echo '<lastmod>' . get_the_modified_time('c', $page) . '</lastmod>';
+            echo '<changefreq>monthly</changefreq>';
+            echo '<priority>0.7</priority>';
+            echo '</url>';
+        }
+        wp_reset_postdata();
+
+        // Incluide categories
+        $categories = get_categories();
+        foreach ($categories as $category) {
+            echo '<url>';
+            echo '<loc>' . get_category_link($category->term_id) . '</loc>';
+            echo '<lastmod>' . date('c') . '</lastmod>';
+            echo '<changefreq>weekly</changefreq>';
+            echo '<priority>0.3</priority>';
+            echo '</url>';
+        }
+
+        // Include tags
+        $tags = get_tags();
+        foreach ($tags as $tag) {
+            echo '<url>';
+            echo '<loc>' . get_tag_link($tag->term_id) . '</loc>';
+            echo '<lastmod>' . date('c') . '</lastmod>';
+            echo '<changefreq>weekly</changefreq>';
+            echo '<priority>0.3</priority>';
+            echo '</url>';
+        }
+
+        echo '</urlset>';
+        exit;
+
+    }  
+}
