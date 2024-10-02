@@ -17,9 +17,16 @@ function custom_sitemap_load_textdomain() {
     load_plugin_textdomain('dfr-custom-sitemap', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
 
+add_action('init', 'register_sitemap_rewrite_rule');
+function register_sitemap_rewrite_rule() {
+    // Add a new rewrite rule for /sitemap.xml
+    add_rewrite_rule('^sitemap\.xml$', 'index.php?sitemap=1', 'top');
+}
+
 add_action('init', 'generate_dynamic_sitemap_plugin');
 function generate_dynamic_sitemap_plugin() {
-    if (isset($_GET['sitemap'])) {
+    // Check if the sitemap=1 parameter is in the query
+    if (get_query_var('sitemap')) {
         header('Content-Type: application/xml; charset=utf-8');
         echo '<?xml version="1.0" encoding="UTF-8"?>';
         echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';   
@@ -76,4 +83,11 @@ function generate_dynamic_sitemap_plugin() {
         exit;
 
     }  
+}
+
+// Register the 'sitemap' query variable
+add_filter('query_vars', 'add_sitemap_query_var');
+function add_sitemap_query_var($vars) {
+    $vars[] = 'sitemap';
+    return $vars;
 }
